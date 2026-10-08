@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Basin 62</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect fill='%2314100e' width='32' height='32'/%3E%3Cpath d='M6 22 L16 6 L26 22 Z' fill='none' stroke='%23e0a34a' stroke-width='2'/%3E%3Cpath d='M10 22 L16 12 L22 22' fill='none' stroke='%231f8f86' stroke-width='2'/%3E%3C/svg%3E" />
+    <script type="module" crossorigin src="./index-vzQjOadl.js"></script>
+    <link rel="stylesheet" crossorigin href="./index-CKtt7z-b.css">
+  </head>
+  <body>
+    <div id="app">
+      <section id="title-screen">
+        <div class="title-copy">
+          <p class="eyebrow">Limited war · Meridian basin · 1962</p>
+          <h1><span>BASIN</span> 62</h1>
+          <p class="lede">
+            The ore seams started growing back faster than either bloc could file a protest.
+            Calder Union and Vostok Combine now fight a limited war: yards, veins, and the radar line.
+            No capitals. No parades. Just the basin.
+          </p>
+          <div class="title-actions">
+            <button type="button" class="primary" id="go-setup">Begin skirmish</button>
+            <button type="button" id="go-manual">Field manual</button>
+          </div>
+          <ul class="title-points">
+            <li>Deploy a yard, keep the power meter green, and haul ore before it grows back.</li>
+            <li>Two blocs, different guns. Sappers steal buildings. One superweapon each.</li>
+            <li>Skirmish versus up to three detachments that build, mine, and attack.</li>
+          </ul>
+        </div>
+        <div class="title-art-wrap">
+          <canvas id="title-art" width="640" height="720"></canvas>
+          <p class="art-caption">Survey plate · Amber Basin</p>
+        </div>
+      </section>
+
+      <section id="setup-screen" class="hidden">
+        <header class="setup-head">
+          <button type="button" id="setup-back" class="texty">Back</button>
+          <div>
+            <p class="eyebrow">Skirmish desk</p>
+            <h2>Lay out the fight</h2>
+          </div>
+        </header>
+        <div class="setup-grid">
+          <div>
+            <h3>Ground</h3>
+            <div id="map-cards" class="card-row"></div>
+            <h3>Your bloc</h3>
+            <div id="faction-cards" class="card-row"></div>
+          </div>
+          <form id="setup-form" class="setup-form">
+            <label>Opponents
+              <select id="opt-ai" name="ai">
+                <option value="1">1 detachment</option>
+                <option value="2">2 detachments</option>
+                <option value="3">3 detachments</option>
+              </select>
+            </label>
+            <label>Their doctrine
+              <select id="opt-opp" name="opp">
+                <option value="opposite">Opposite bloc</option>
+                <option value="mirror">Same bloc</option>
+                <option value="mixed">Mixed</option>
+              </select>
+            </label>
+            <label>Difficulty
+              <select id="opt-diff" name="diff">
+                <option value="cautious">Cautious</option>
+                <option value="standard" selected>Standard</option>
+                <option value="relentless">Relentless</option>
+              </select>
+            </label>
+            <label>Starting credits
+              <select id="opt-credits" name="credits">
+                <option value="5000">5,000</option>
+                <option value="10000" selected>10,000</option>
+                <option value="20000">20,000</option>
+              </select>
+            </label>
+            <p class="form-note">You land with a rig, two rifles, and a scout. Press D on open ground to raise the yard. The other side will do the same, then mine, tech, and come for you.</p>
+            <button type="submit" class="primary" id="start-match">Start match</button>
+          </form>
+        </div>
+      </section>
+
+      <section id="game-screen" class="hidden">
+        <header id="topbar">
+          <div class="brand">BASIN 62</div>
+          <div id="credits" class="stat">CR 0</div>
+          <div class="power-wrap" title="Power produced versus power drawn">
+            <div class="power-track"><span id="power-fill"></span></div>
+            <span id="power-label">POWER</span>
+          </div>
+          <button type="button" id="super-btn" class="super-btn" title="Target superweapon (F)">LANCE</button>
+          <div id="timer" class="stat">00:00</div>
+          <button type="button" id="speed-btn" title="Game speed">1×</button>
+          <button type="button" id="pause-btn">Pause</button>
+        </header>
+        <div id="stage">
+          <canvas id="view"></canvas>
+          <div id="alerts"></div>
+          <div id="hint" class="hidden"></div>
+        </div>
+        <aside id="side">
+          <div id="mini-wrap">
+            <canvas id="minimap" width="320" height="180"></canvas>
+            <p id="mini-caption">Minimap</p>
+          </div>
+          <div id="side-tabs" class="side-tabs"></div>
+          <div id="side-scroll">
+            <div id="side-head"></div>
+            <div id="side-body"></div>
+          </div>
+        </aside>
+        <div id="pause-layer" class="hidden">
+          <div class="sheet">
+            <p class="eyebrow">Hold</p>
+            <h2>Match paused</h2>
+            <div class="sheet-row">
+              <button type="button" data-speed="1">1×</button>
+              <button type="button" data-speed="2">2×</button>
+              <button type="button" data-speed="3">3×</button>
+            </div>
+            <div class="sheet-row">
+              <button type="button" id="sfx-btn">Sound on</button>
+              <button type="button" id="music-btn">Music on</button>
+            </div>
+            <button type="button" id="resume-btn" class="primary">Resume</button>
+            <button type="button" id="pause-manual">Field manual</button>
+            <button type="button" id="resign-btn" class="danger">Resign</button>
+            <button type="button" id="quit-btn">Quit to desk</button>
+          </div>
+        </div>
+        <div id="end-layer" class="hidden">
+          <div class="sheet">
+            <p class="eyebrow" id="end-kicker">Result</p>
+            <h2 id="end-title">Basin held</h2>
+            <p id="end-copy"></p>
+            <p id="end-stats" class="end-stats"></p>
+            <button type="button" id="end-again" class="primary">Run it back</button>
+            <button type="button" id="end-desk">Return to desk</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div id="modal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="manual-title">
+      <div class="sheet manual">
+        <p class="eyebrow">Field manual</p>
+        <h2 id="manual-title">How the basin is fought</h2>
+        <div class="manual-cols">
+          <div>
+            <h3>Orders</h3>
+            <ul>
+              <li><b>Left drag</b> selects your units. Shift-click adds or removes.</li>
+              <li><b>Double-click</b> a unit to grab every visible one of that type.</li>
+              <li><b>Right-click</b> ground to move. Shift queues another waypoint.</li>
+              <li><b>Right-click</b> an enemy to attack. A sapper on a building captures it.</li>
+              <li><b>Right-click</b> your hauler with infantry selected to load. <b>U</b> unloads.</li>
+              <li><b>A</b> then click: attack-move. <b>T</b> then click: bombard that ground.</li>
+              <li><b>S</b> stop · <b>G</b> guard · <b>D</b> deploy rig · <b>H</b> find your yard.</li>
+              <li><b>X</b> sell · <b>R</b> repair · <b>F</b> aim superweapon · <b>Esc</b> cancel.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Base</h3>
+            <ul>
+              <li>Select the rig and press <b>D</b>, or use Deploy on the sidebar. Structures must touch your existing base.</li>
+              <li>The <b>Base / Foot / Armor / Air / Sea</b> tabs stay up. You do not have to select the building to queue.</li>
+              <li>When a structure finishes, place it on green ground. Drag a fence or berm to lay a line. Right-click refunds.</li>
+              <li>Low power slows production and shuts off guns, flak, coils, radar, and the superweapon.</li>
+              <li>Ore regrows if a vein is not stripped bare. Gems pay more and come back slower.</li>
+              <li>Credit vaults raise the ceiling. Full stores turn haulers away.</li>
+              <li>Radar (survey mast / listening post) turns the minimap on.</li>
+              <li><b>1–9</b> recalls a group. <b>Ctrl+number</b> assigns. <b>Shift+number</b> adds it to the selection.</li>
+              <li>Arrow keys or the screen edge scroll. Wheel zooms. Middle mouse pans. <b>[ ]</b> changes speed. <b>P</b> pauses. Space jumps to the last alert.</li>
+            </ul>
+          </div>
+        </div>
+        <button type="button" id="modal-close" class="primary">Close</button>
+      </div>
+    </div>
+  </body>
+</html>
